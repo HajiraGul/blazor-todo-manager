@@ -76,41 +76,14 @@ Todo Manager started from the **Blazor Web App** template with *Individual Accou
 
 ## 📸 Screenshots
 
-> Screenshots are stored in the [`screenshots/`](screenshots/) folder.
-
-### Landing Page
-<!-- Replace with your screenshot -->
-![Landing Page](screenshots/landing-page.png)
-
-### Register
-![Register Page](screenshots/register.png)
-
-### Login
-![Login Page](screenshots/login.png)
-
-### Dashboard — Task List & Statistics
-![Dashboard](screenshots/dashboard.png)
-
-### Adding a Task
-![Add Task](screenshots/add-task.png)
-
-### Inline Editing
-![Edit Task](screenshots/edit-task.png)
-
-### Filtering (Active / Completed)
-![Filter Tasks](screenshots/filter-tasks.png)
-
-### Empty State
-![Empty State](screenshots/empty-state.png)
-
-### Account Management (Profile)
-![Manage Account](screenshots/manage-account.png)
-
-### Mobile View
 <p align="center">
-  <img src="screenshots/mobile-home.png" alt="Mobile Home" width="280" />
-  &nbsp;&nbsp;
-  <img src="screenshots/mobile-dashboard.png" alt="Mobile Dashboard" width="280" />
+ <img width="975" height="548" alt="image" src="https://github.com/user-attachments/assets/2071f19c-923b-47f2-b74a-3f6a7eb6d369" />
+ <img width="975" height="548" alt="image" src="https://github.com/user-attachments/assets/a85ff908-301c-4d8b-b195-22af3eb218a5" />
+ <img width="975" height="548" alt="image" src="https://github.com/user-attachments/assets/04e1fa0f-1bc8-40e3-88b5-78af99bcb4ef" />
+ <img width="975" height="548" alt="image" src="https://github.com/user-attachments/assets/40d8f4d1-b220-4bf0-8e7c-2eb46b3dfd32" />
+ <img width="975" height="548" alt="image" src="https://github.com/user-attachments/assets/0018cd4c-2e2e-4056-9b4f-cfe126aba4c9" />
+ <img width="975" height="489" alt="image" src="https://github.com/user-attachments/assets/beef5a48-01e4-4de0-8651-19e57c738e6c" />
+ <img width="975" height="462" alt="image" src="https://github.com/user-attachments/assets/1bc6255a-c3bc-46c0-aa1b-e45b2f474384" />
 </p>
 
 ---
