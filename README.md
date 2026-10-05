@@ -467,7 +467,7 @@ These are known gaps and ideas for future work:
 
 ## 📄 License
 
-This project is released under the **MIT License**. See [LICENSE](LICENSE) for details.
+This project is released under the **MIT License**. See [LICENSE](LICENSE.txt) for details.
 
 ---
 
