@@ -449,6 +449,5 @@ This project is released under the **MIT License**. See [LICENSE](LICENSE.txt) f
 **Hajira Gul**
 Built as part of the **FFC Internship** program.
 
-- GitHub: [@your-username](https://github.com/your-username)
 
 <p align="center">Built with ❤️ using Blazor &amp; .NET 8</p>
