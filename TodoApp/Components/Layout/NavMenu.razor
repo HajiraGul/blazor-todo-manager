@@ -1,0 +1,54 @@
+﻿<div class="top-row navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">
+            ✓ Todo Manager
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">Home</NavLink>
+                </li>
+                <AuthorizeView>
+                    <Authorized>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="/dashboard">Dashboard</NavLink>
+                        </li>
+                    </Authorized>
+                </AuthorizeView>
+            </ul>
+
+            <AuthorizeView>
+                <Authorized Context="authContext">
+                    <span class="navbar-text text-white-50 me-3">
+                        @authContext.User.Identity?.Name
+                    </span>
+
+                    <a class="btn btn-outline-light btn-sm me-2"
+                       href="/Account/Manage">
+                        Profile
+                    </a>
+
+                    <a class="btn btn-danger btn-sm"
+                       href="/logout">
+                        Logout
+                    </a>
+                </Authorized>
+
+                <NotAuthorized>
+                    <a class="btn btn-outline-light btn-sm me-2" href="/Account/Login">
+                        Login
+                    </a>
+
+                    <a class="btn btn-primary btn-sm" href="/Account/Register">
+                        Register
+                    </a>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+    </div>
+</div>

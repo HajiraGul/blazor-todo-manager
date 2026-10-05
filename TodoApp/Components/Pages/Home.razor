@@ -1,0 +1,81 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Authorization
+@attribute [AllowAnonymous]
+
+<PageTitle>Todo Manager - Organize Your Life</PageTitle>
+
+<div class="hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold">
+                    Manage Your Tasks<br />
+                    Easily & Securely
+                </h1>
+                <p class="lead mt-4">
+                    Organize your daily tasks, track your progress, and stay productive with Todo Manager.
+                </p>
+                <div class="mt-4">
+                    <AuthorizeView>
+                        <Authorized>
+                            <a href="/dashboard" class="btn btn-light btn-lg me-3">
+                                Go to Dashboard
+                            </a>
+                        </Authorized>
+                        <NotAuthorized>
+                            <a href="/Account/Login" class="btn btn-light btn-lg me-3">
+                                Login
+                            </a>
+                            <a href="/Account/Register" class="btn btn-outline-light btn-lg">
+                                Register
+                            </a>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="hero-illustration">
+                    <div class="hero-icon">✓</div>
+                    <div class="hero-cards">
+                        <div class="mini-card">Buy groceries</div>
+                        <div class="mini-card done">Finish project</div>
+                        <div class="mini-card">Call dentist</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="container mt-5 pb-5">
+    <h2 class="text-center mb-5 fw-bold">Why Choose Todo Manager?</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h4>Secure Login</h4>
+                <p>Register and login securely using ASP.NET Core Identity with encrypted passwords.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">✅</div>
+                <h4>Manage Tasks</h4>
+                <p>Add, edit, complete, and delete tasks easily from your personal dashboard.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h4>Stay Organized</h4>
+                <p>Filter tasks by status and track your progress with real-time statistics.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container text-center">
+        © 2026 Todo Manager · Built with Blazor & SQL Server
+    </div>
+</footer>

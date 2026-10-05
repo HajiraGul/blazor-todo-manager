@@ -1,0 +1,292 @@
+﻿@page "/dashboard"
+@rendermode InteractiveServer
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@using TodoApp.Models
+@using TodoApp.Services
+@inject TodoService TodoService
+
+<PageTitle>Dashboard - Todo Manager</PageTitle>
+
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div>
+            <h1 class="dashboard-title">My Tasks</h1>
+            <p class="dashboard-subtitle">Manage your todos in one place</p>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="stat-card stat-total">
+                <div class="stat-icon">📋</div>
+                <div>
+                    <div class="stat-value">@stats.Total</div>
+                    <div class="stat-label">Total Tasks</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card stat-pending">
+                <div class="stat-icon">⏳</div>
+                <div>
+                    <div class="stat-value">@stats.Pending</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card stat-completed">
+                <div class="stat-icon">✅</div>
+                <div>
+                    <div class="stat-value">@stats.Completed</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card add-todo-card mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Add New Task</h5>
+            <EditForm Model="newTodo" OnValidSubmit="HandleCreate">
+                <DataAnnotationsValidator />
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <InputText @bind-Value="newTodo.Title" class="form-control" placeholder="Task title *" />
+                        <ValidationMessage For="() => newTodo.Title" class="text-danger small" />
+                    </div>
+                    <div class="col-md-5">
+                        <InputText @bind-Value="newTodo.Description" class="form-control" placeholder="Description (optional)" />
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100" disabled="@isSaving">
+                            @if (isSaving)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1"></span>
+                            }
+                            Add Task
+                        </button>
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+
+    <div class="filter-tabs mb-3">
+        <button class="filter-btn @(currentFilter == "all" ? "active" : "")" @onclick='() => SetFilter("all")'>All</button>
+        <button class="filter-btn @(currentFilter == "active" ? "active" : "")" @onclick='() => SetFilter("active")'>Active</button>
+        <button class="filter-btn @(currentFilter == "completed" ? "active" : "")" @onclick='() => SetFilter("completed")'>Completed</button>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Loading tasks...</p>
+        </div>
+    }
+    else if (!todos.Any())
+    {
+        <div class="empty-state">
+            <div class="empty-icon">📝</div>
+            <h4>No tasks yet</h4>
+            <p class="text-muted">Add your first task above to get started!</p>
+        </div>
+    }
+    else
+    {
+        <div class="todo-list">
+            @foreach (var todo in todos)
+            {
+                <div class="todo-item @(todo.IsCompleted ? "completed" : "")">
+                    @if (editingId == todo.Id)
+                    {
+                        <div class="todo-edit-form">
+                            <EditForm Model="editModel" OnValidSubmit="() => HandleUpdate(todo.Id)">
+                                <DataAnnotationsValidator />
+                                <div class="row g-2 align-items-start">
+                                    <div class="col-md-4">
+                                        <InputText @bind-Value="editModel.Title" class="form-control form-control-sm" />
+                                        <ValidationMessage For="() => editModel.Title" class="text-danger small" />
+                                    </div>
+                                    <div class="col-md-5">
+                                        <InputText @bind-Value="editModel.Description" class="form-control form-control-sm" placeholder="Description" />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button type="submit" class="btn btn-success btn-sm me-1">Save</button>
+                                        <button type="button" class="btn btn-secondary btn-sm" @onclick="CancelEdit">Cancel</button>
+                                    </div>
+                                </div>
+                            </EditForm>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="todo-checkbox">
+                            <input type="checkbox"
+                                   checked="@todo.IsCompleted"
+                                   @onchange="() => HandleToggle(todo.Id)" />
+                        </div>
+                        <div class="todo-content">
+                            <div class="todo-title">@todo.Title</div>
+                            @if (!string.IsNullOrEmpty(todo.Description))
+                            {
+                                <div class="todo-description">@todo.Description</div>
+                            }
+                            <div class="todo-meta">
+                                Created @todo.CreatedAt.ToLocalTime().ToString("MMM dd, yyyy HH:mm")
+                                @if (todo.UpdatedAt.HasValue)
+                                {
+                                    <span> · Updated @todo.UpdatedAt.Value.ToLocalTime().ToString("MMM dd, yyyy HH:mm")</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="todo-actions">
+                            <button class="btn btn-outline-primary btn-sm" @onclick="() => StartEdit(todo)">Edit</button>
+                            <button class="btn btn-outline-danger btn-sm" @onclick="() => HandleDelete(todo.Id)">Delete</button>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(statusMessage))
+    {
+        <div class="alert @(isError ? "alert-danger" : "alert-success") alert-dismissible fade show mt-3" role="alert">
+            @statusMessage
+            <button type="button" class="btn-close" @onclick="() => statusMessage = null"></button>
+        </div>
+    }
+</div>
+
+@code {
+    private List<TodoItem> todos = [];
+    private (int Total, int Completed, int Pending) stats;
+    private string currentFilter = "all";
+    private bool isLoading = true;
+    private bool isSaving;
+    private int? editingId;
+    private string? statusMessage;
+    private bool isError;
+
+    private NewTodoModel newTodo = new();
+    private EditTodoModel editModel = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        isLoading = true;
+        todos = await TodoService.GetTodosAsync(currentFilter == "all" ? null : currentFilter);
+        stats = await TodoService.GetStatsAsync();
+        isLoading = false;
+    }
+
+    private async Task SetFilter(string filter)
+    {
+        currentFilter = filter;
+        await LoadDataAsync();
+    }
+
+    private async Task HandleCreate()
+    {
+        isSaving = true;
+        try
+        {
+            await TodoService.CreateAsync(newTodo.Title, newTodo.Description);
+            newTodo = new NewTodoModel();
+            ShowMessage("Task created successfully!", false);
+            await LoadDataAsync();
+        }
+        catch (Exception)
+        {
+            ShowMessage("Failed to create task. Please try again.", true);
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void StartEdit(TodoItem todo)
+    {
+        editingId = todo.Id;
+        editModel = new EditTodoModel
+        {
+            Title = todo.Title,
+            Description = todo.Description ?? string.Empty
+        };
+    }
+
+    private void CancelEdit()
+    {
+        editingId = null;
+        editModel = new EditTodoModel();
+    }
+
+    private async Task HandleUpdate(int id)
+    {
+        var success = await TodoService.UpdateAsync(id, editModel.Title, editModel.Description);
+        if (success)
+        {
+            editingId = null;
+            ShowMessage("Task updated successfully!", false);
+            await LoadDataAsync();
+        }
+        else
+        {
+            ShowMessage("Failed to update task.", true);
+        }
+    }
+
+    private async Task HandleToggle(int id)
+    {
+        await TodoService.ToggleCompleteAsync(id);
+        await LoadDataAsync();
+    }
+
+    private async Task HandleDelete(int id)
+    {
+        var success = await TodoService.DeleteAsync(id);
+        if (success)
+        {
+            ShowMessage("Task deleted.", false);
+            await LoadDataAsync();
+        }
+        else
+        {
+            ShowMessage("Failed to delete task.", true);
+        }
+    }
+
+    private void ShowMessage(string message, bool error)
+    {
+        statusMessage = message;
+        isError = error;
+    }
+
+    private class NewTodoModel
+    {
+        [Required(ErrorMessage = "Title is required")]
+        [StringLength(200, ErrorMessage = "Title cannot exceed 200 characters")]
+        public string Title { get; set; } = string.Empty;
+
+        [StringLength(1000, ErrorMessage = "Description cannot exceed 1000 characters")]
+        public string? Description { get; set; }
+    }
+
+    private class EditTodoModel
+    {
+        [Required(ErrorMessage = "Title is required")]
+        [StringLength(200, ErrorMessage = "Title cannot exceed 200 characters")]
+        public string Title { get; set; } = string.Empty;
+
+        [StringLength(1000, ErrorMessage = "Description cannot exceed 1000 characters")]
+        public string? Description { get; set; }
+    }
+}
